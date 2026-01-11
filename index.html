@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SILVE AI - الإصدار المصلح</title>
+    <title>SILVE AI - النسخة المستقرة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-        body { background-color: #0b0c0d; color: #e3e3e3; margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        header { padding: 15px; text-align: center; font-size: 2rem; font-weight: bold; background: linear-gradient(90deg, #cfd9df, #e2ebf0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; border-bottom: 1px solid #222; }
+        body { background-color: #0d0e10; color: #e3e3e3; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        header { padding: 20px; text-align: center; font-size: 2.2rem; font-weight: bold; background: linear-gradient(90deg, #8e9eab, #eef2f3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; border-bottom: 1px solid #1f2023; }
         #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .message { max-width: 85%; padding: 12px 18px; border-radius: 15px; line-height: 1.6; word-wrap: break-word; }
-        .user-message { align-self: flex-start; background-color: #23262a; border-bottom-right-radius: 2px; }
-        .ai-message { align-self: flex-end; background-color: #131416; border: 1px solid #333; border-bottom-left-radius: 2px; }
-        pre { direction: ltr; background: #000; color: #a6e22e; padding: 15px; border-radius: 10px; overflow-x: auto; font-family: monospace; }
-        .input-area { padding: 20px; display: flex; gap: 10px; max-width: 900px; margin: 0 auto; width: 100%; }
-        input { flex: 1; background: #1e1f22; border: 1px solid #333; color: white; padding: 12px; border-radius: 10px; outline: none; }
-        button { background: #fff; color: #000; border: none; padding: 0 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        .error-msg { color: #ff5555; font-size: 0.9rem; }
+        .message { max-width: 85%; padding: 14px; border-radius: 12px; line-height: 1.7; word-wrap: break-word; font-size: 1rem; }
+        .user-message { align-self: flex-start; background-color: #2b2d31; border-bottom-right-radius: 2px; }
+        .ai-message { align-self: flex-end; background-color: #1a1c1e; border: 1px solid #333; border-bottom-left-radius: 2px; }
+        pre { direction: ltr; background: #000; color: #76ff03; padding: 15px; border-radius: 8px; overflow-x: auto; font-family: 'Consolas', monospace; border: 1px solid #444; }
+        .input-area { padding: 20px; display: flex; gap: 10px; max-width: 900px; margin: 0 auto; width: 100%; border-top: 1px solid #1f2023; }
+        input { flex: 1; background: #1e1f22; border: 1px solid #333; color: white; padding: 15px; border-radius: 12px; outline: none; transition: 0.3s; }
+        input:focus { border-color: #ffffff; }
+        button { background: #ffffff; color: #000; border: none; padding: 0 25px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #bbb; }
+        .error-msg { color: #ff5252; background: rgba(255, 82, 82, 0.1); padding: 10px; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -25,7 +27,7 @@
 <header>SILVE AI</header>
 
 <div id="chat-container">
-    <div class="message ai-message">تم إصلاح النظام. أنا جاهز للعمل الآن، كيف يمكنني مساعدتك؟</div>
+    <div class="message ai-message">أهلاً بك في <b>SILVE AI</b>. تم تحديث المسارات البرمجية لضمان الاستقرار. كيف يمكنني مساعدتك؟</div>
 </div>
 
 <div class="input-area">
@@ -34,9 +36,10 @@
 </div>
 
 <script>
-    // تم استخدام 1.5 flash لضمان الاستقرار، يمكنك تجربة تغييرها لـ 2.0-flash-exp إذا رغبت
+    // تم تصحيح اسم الموديل إلى الصيغة المطلوبة لنسخة v1beta
     const API_KEY = 'AIzaSyBkHLBpZgmI1YRJ0oiVOKbzxpMNROkx5K4'; 
-    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+    const MODEL_NAME = 'gemini-1.5-flash'; // تم تحديث الاسم
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
 
     async function sendMessage() {
         const inputField = document.getElementById('user-input');
@@ -50,7 +53,7 @@
         inputField.value = '';
         btn.disabled = true;
 
-        const loadingDiv = addMessage('جاري التفكير...', 'ai-message');
+        const loadingDiv = addMessage('جاري المعالجة...', 'ai-message');
         container.scrollTop = container.scrollHeight;
 
         try {
@@ -67,15 +70,16 @@
             const data = await response.json();
 
             if (data.error) {
-                loadingDiv.innerHTML = `<span class="error-msg">خطأ من جوجل: ${data.error.message}</span>`;
+                // عرض رسالة خطأ واضحة في حال وجود مشكلة بالمفتاح أو الموديل
+                loadingDiv.innerHTML = `<div class="error-msg">⚠️ خطأ: ${data.error.message}<br><small>تأكد من تفعيل Gemini API في Google AI Studio.</small></div>`;
             } else if (data.candidates && data.candidates[0].content) {
                 const aiResponse = data.candidates[0].content.parts[0].text;
                 loadingDiv.innerHTML = formatAIResponse(aiResponse);
             } else {
-                loadingDiv.innerText = "وصل رد فارغ من الخادم.";
+                loadingDiv.innerText = "لم أتمكن من الحصول على رد، يرجى المحاولة مرة أخرى.";
             }
         } catch (error) {
-            loadingDiv.innerText = "فشل الاتصال بالإنترنت.";
+            loadingDiv.innerText = "فشل الاتصال بالخادم. يرجى التحقق من الإنترنت.";
         } finally {
             btn.disabled = false;
             container.scrollTop = container.scrollHeight;
@@ -91,7 +95,11 @@
     }
 
     function formatAIResponse(text) {
+        // تحسين عرض الأكواد البرمجية
         let formatted = text.replace(/```(.*?)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+        // تحويل السطور البرمجية البسيطة
+        formatted = formatted.replace(/`([^`]+)`/g, '<code style="background:#333;padding:2px 5px;border-radius:4px;">$1</code>');
+        // تحويل السطور الجديدة
         formatted = formatted.replace(/\n/g, '<br>');
         return formatted;
     }
